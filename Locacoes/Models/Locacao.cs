@@ -10,5 +10,6 @@ namespace Locacoes.Models
         [DisplayName("Cliente")]
         public int ClienteId { get; set; }
         public Cliente? Cliente { get; set; }
+        public List<VeiculoLocado>? VeiculosLocados { get; set; }
     }
 }

@@ -13,5 +13,11 @@ namespace Locacoes.Data
         public DbSet<Modelo> Modelos { get; set; }
         public DbSet<Veiculo> Veiculo { get; set; }
         public DbSet<Locacao> Locacoes { get; set; }
+        public DbSet<VeiculoLocado> VeiculosLocados { get; set; }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<VeiculoLocado>()
+                .HasKey(vl => new { vl.LocacaoId, vl.VeiculoId });
+        }
     }
 }

@@ -11,5 +11,6 @@ namespace Locacoes.Models
         [DisplayName("Modelo")]
         public int ModeloId { get; set; }
         public Modelo? Modelo { get; set; }
+        public List<VeiculoLocado>? VeiculosLocados { get; set; }
     }
 }
