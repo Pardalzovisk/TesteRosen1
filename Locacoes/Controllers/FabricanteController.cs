@@ -33,7 +33,7 @@ namespace Locacoes.Controllers
                 return NotFound();
             }
 
-            var fabricante = await _context.Fabricantes
+            var fabricante = await _context.Fabricantes.Include(m => m.Modelos)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (fabricante == null)
             {
