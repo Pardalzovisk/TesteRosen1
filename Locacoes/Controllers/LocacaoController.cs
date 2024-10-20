@@ -48,7 +48,8 @@ namespace Locacoes.Controllers
         // GET: Locacao/Create
         public IActionResult Create()
         {
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Id");
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Nome");
+            ViewData["VeiculoId"] = new SelectList(_context.Veiculo, "Id", "Modelo"); // Usar o campo Modelo para exibir o nome do veículo
             return View();
         }
 
@@ -65,7 +66,7 @@ namespace Locacoes.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Id", locacao.ClienteId);
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Nome", locacao.ClienteId);
             return View(locacao);
         }
 
@@ -82,7 +83,7 @@ namespace Locacoes.Controllers
             {
                 return NotFound();
             }
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Id", locacao.ClienteId);
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Nome", locacao.ClienteId);
             return View(locacao);
         }
 
@@ -118,7 +119,7 @@ namespace Locacoes.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Id", locacao.ClienteId);
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Nome", locacao.ClienteId);
             return View(locacao);
         }
 
@@ -140,6 +141,7 @@ namespace Locacoes.Controllers
 
             return View(locacao);
         }
+
 
         // POST: Locacao/Delete/5
         [HttpPost, ActionName("Delete")]

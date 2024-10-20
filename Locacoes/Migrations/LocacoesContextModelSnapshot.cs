@@ -48,7 +48,7 @@ namespace Locacoes.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Clientes");
+                    b.ToTable("Clientes", (string)null);
                 });
 
             modelBuilder.Entity("Locacoes.Models.Fabricante", b =>
@@ -69,7 +69,7 @@ namespace Locacoes.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Fabricantes");
+                    b.ToTable("Fabricantes", (string)null);
                 });
 
             modelBuilder.Entity("Locacoes.Models.Locacao", b =>
@@ -93,7 +93,7 @@ namespace Locacoes.Migrations
 
                     b.HasIndex("ClienteId");
 
-                    b.ToTable("Locacoes");
+                    b.ToTable("Locacoes", (string)null);
                 });
 
             modelBuilder.Entity("Locacoes.Models.Modelo", b =>
@@ -118,7 +118,7 @@ namespace Locacoes.Migrations
 
                     b.HasIndex("FabricanteId");
 
-                    b.ToTable("Modelos");
+                    b.ToTable("Modelos", (string)null);
                 });
 
             modelBuilder.Entity("Locacoes.Models.Veiculo", b =>
@@ -146,7 +146,7 @@ namespace Locacoes.Migrations
 
                     b.HasIndex("ModeloId");
 
-                    b.ToTable("Veiculo");
+                    b.ToTable("Veiculo", (string)null);
                 });
 
             modelBuilder.Entity("Locacoes.Models.VeiculoLocado", b =>
@@ -173,7 +173,7 @@ namespace Locacoes.Migrations
 
                     b.HasIndex("VeiculoId");
 
-                    b.ToTable("VeiculosLocados");
+                    b.ToTable("VeiculosLocados", (string)null);
                 });
 
             modelBuilder.Entity("Locacoes.Models.Locacao", b =>
