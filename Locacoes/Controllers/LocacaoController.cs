@@ -48,27 +48,62 @@ namespace Locacoes.Controllers
         // GET: Locacao/Create
         public IActionResult Create()
         {
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Nome");
-            ViewData["VeiculoId"] = new SelectList(_context.Veiculo, "Id", "Modelo"); // Usar o campo Modelo para exibir o nome do veículo
+            // Inclua o relacionamento com o Modelo para carregar as informações corretamente
+            var veiculos = _context.Veiculo
+                .Include(v => v.Modelo) // Carregar o modelo relacionado
+                .Select(v => new { v.Id, Nome = v.Modelo.Nome + " (" + v.AnoFabricacao + ")" }) // Concatene informações do veículo e modelo
+                .ToList();
+
+            ViewData["VeiculoId"] = new SelectList(veiculos, "Id", "Nome"); // Passe o nome formatado
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Nome"); // Carregue os clientes
+
             return View();
         }
+
 
         // POST: Locacao/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,DataLocacao,ValorTotal,ClienteId")] Locacao locacao)
+        public async Task<IActionResult> Create([Bind("Id,DataLocacao,ValorTotal,ClienteId")] Locacao locacao, string veiculosSelecionados)
         {
             if (ModelState.IsValid)
             {
+                // Salvar locacao
                 _context.Add(locacao);
                 await _context.SaveChangesAsync();
+
+                // Processar os veículos selecionados
+                if (!string.IsNullOrEmpty(veiculosSelecionados))
+                {
+                    var veiculoIds = veiculosSelecionados.Split(',')
+                                        .Select(id => int.Parse(id))
+                                        .ToList();
+
+                    foreach (var veiculoId in veiculoIds)
+                    {
+                        var veiculoLocado = new VeiculoLocado
+                        {
+                            VeiculoId = veiculoId,
+                            LocacaoId = locacao.Id,
+                            KilometragemInicial = 10000,  // Ajuste conforme necessário
+                            DataDevolucao = DateOnly.FromDateTime(DateTime.Now.AddDays(7)),  // Ajuste conforme necessário
+                            ValorDiaria = 150.00m  // Ajuste conforme necessário
+                        };
+                        _context.VeiculosLocados.Add(veiculoLocado);
+                    }
+                    await _context.SaveChangesAsync();
+                }
+
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Nome", locacao.ClienteId);
+            ViewData["VeiculoId"] = new SelectList(_context.Veiculo, "Id", "Modelo"); // Aqui estamos passando os veículos de volta para a view no caso de erro
             return View(locacao);
         }
+
 
         // GET: Locacao/Edit/5
         public async Task<IActionResult> Edit(int? id)

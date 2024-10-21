@@ -23,47 +23,58 @@
                 <input asp-for="ValorTotal" class="form-control" />
                 <span asp-validation-for="ValorTotal" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="ClienteId" class="control-label"></label>
                 <select asp-for="ClienteId" class ="form-control" asp-items="ViewBag.ClienteId"></select>
             </div>
-            <div class="form-group">
-                <label for="VeiculoId" class="control-label">Veículo</label>
-                <div style="display: flex; align-items: center;">
-                    <select id="VeiculoId" class="form-control" style="flex: 1;" asp-items="ViewBag.VeiculoId"></select>
-                    <button type="button" class="btn btn-outline-secondary" style="margin-left: 5px;" onclick="adicionarVeiculo()">+</button>
-                </div>
-            </div>
 
             <div class="form-group">
-                <label for="veiculosLocados" class="control-label">Veículos Locados</label>
-                <div style="display: flex; align-items: center;">
-                    <textarea id="veiculosLocados" class="form-control" rows="5" style="flex: 1;" readonly></textarea>
-                    <button type="button" class="btn btn-outline-secondary" style="margin-left: 5px;" onclick="removerVeiculo()">-</button>
-                </div>
-            </div>
-
-            <script>
-                function adicionarVeiculo() {
-                    var veiculoSelect = document.getElementById('VeiculoId');
-                    var veiculoSelecionado = veiculoSelect.options[veiculoSelect.selectedIndex].text;
-                    var textarea = document.getElementById('veiculosLocados');
-
-                    if (textarea.value === "") {
-                        textarea.value = veiculoSelecionado;
-                    } else {
-                        textarea.value += "\n" + veiculoSelecionado;
+                <label for="Veiculo">Veículo</label>
+                <select id="Veiculo" class="form-control">
+                    <option value="">Selecione um veículo</option>
+                    @foreach (var veiculo in ViewBag.VeiculoId)
+                    {
+                        <option value="@veiculo.Value">@veiculo.Text</option> <!-- Aqui exibimos os veículos disponíveis -->
                     }
-                }
+                </select>
+                <button type="button" id="adicionarVeiculo" class="btn btn-primary">Adicionar</button>
+            </div>
 
-                function removerVeiculo() {
-                    var textarea = document.getElementById('veiculosLocados');
-                    var lines = textarea.value.split('\n');
+            <div class="form-group">
+                <label>Veículos Locados</label>
+                <ul id="veiculosLocados" class="list-group">
+                    <!-- Esta lista será populada via JavaScript quando o veículo for adicionado -->
+                </ul>
+            </div>
+            <button type="submit" class="btn btn-success">Salvar</button>
+        
+        <script>
+            document.getElementById('adicionarVeiculo').addEventListener('click', function () {
+                var veiculoDropdown = document.getElementById('Veiculo');
+                var veiculoSelecionado = veiculoDropdown.options[veiculoDropdown.selectedIndex].text;
+                var veiculoId = veiculoDropdown.value;
 
-                    lines.pop();
-                    textarea.value = lines.join('\n');
+                if (veiculoId) {
+                    // Adiciona o veículo na lista de veículos locados
+                    var listaVeiculos = document.getElementById('veiculosLocados');
+                    var listItem = document.createElement('li');
+                    listItem.className = "list-group-item";
+                    listItem.textContent = veiculoSelecionado;
+                    listaVeiculos.appendChild(listItem);
+
+                    // Esconde a opção no dropdown após ser adicionada
+                    veiculoDropdown.options[veiculoDropdown.selectedIndex].style.display = 'none';
+
+                    // Adiciona o veículo na lista oculta que será submetida no form
+                    var inputVeiculosSelecionados = document.createElement('input');
+                    inputVeiculosSelecionados.type = 'hidden';
+                    inputVeiculosSelecionados.name = 'veiculosSelecionados';
+                    inputVeiculosSelecionados.value = veiculoId;
+                    document.forms[0].appendChild(inputVeiculosSelecionados);
                 }
-            </script>
+            });
+        </script>
 
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

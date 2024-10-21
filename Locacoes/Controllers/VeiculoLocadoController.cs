@@ -50,7 +50,7 @@ namespace Locacoes.Controllers
         public IActionResult Create()
         {
             ViewData["LocacaoId"] = new SelectList(_context.Locacoes, "Id", "Id");
-            ViewData["VeiculoId"] = new SelectList(_context.Veiculo, "Id", "Id");
+            ViewData["VeiculoId"] = new SelectList(_context.Veiculo, "Id", "Modelo");
             return View();
         }
 
