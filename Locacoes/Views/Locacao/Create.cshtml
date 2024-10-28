@@ -26,55 +26,70 @@
 
             <div class="form-group">
                 <label asp-for="ClienteId" class="control-label"></label>
-                <select asp-for="ClienteId" class ="form-control" asp-items="ViewBag.ClienteId"></select>
+                <select asp-for="ClienteId" class="form-control" asp-items="ViewBag.ClienteId"></select>
             </div>
 
             <div class="form-group">
                 <label for="Veiculo">Veículo</label>
-                <select id="Veiculo" class="form-control">
-                    <option value="">Selecione um veículo</option>
-                    @foreach (var veiculo in ViewBag.VeiculoId)
-                    {
-                        <option value="@veiculo.Value">@veiculo.Text</option> 
-                    }
-                </select>
-                <button type="button" id="adicionarVeiculo" class="btn btn-primary">Adicionar</button>
+                <div class="d-flex align-items-center">
+                    <select id="Veiculo" class="form-control" style="width: 200px; margin-right: 10px;">
+                        <option value="">Selecione um veículo</option>
+                        @foreach (var veiculo in ViewBag.VeiculoId)
+                        {
+                            <option value="@veiculo.Value">@veiculo.Text</option>
+                        }
+                    </select>
+                    <button type="button" id="adicionarVeiculo" class="btn btn-light border" style="width: 30px; height: 30px;">+</button>
+                </div>
             </div>
 
             <div class="form-group">
                 <label>Veículos Locados</label>
-                <ul id="veiculosLocados" class="list-group">
-
-                </ul>
+                <ul id="veiculosLocados" class="list-group"></ul>
+                <button type="button" id="removerVeiculo" class="btn btn-light border" style="width: 30px; height: 30px; margin-top: 10px;">-</button>
             </div>
-            <button type="submit" class="btn btn-success">Salvar</button>
-        
-        <script>
-            document.getElementById('adicionarVeiculo').addEventListener('click', function () {
-                var veiculoDropdown = document.getElementById('Veiculo');
-                var veiculoSelecionado = veiculoDropdown.options[veiculoDropdown.selectedIndex].text;
-                var veiculoId = veiculoDropdown.value;
 
-                if (veiculoId) {
-  
+            <script>
+                document.getElementById('adicionarVeiculo').addEventListener('click', function () {
+                    var veiculoDropdown = document.getElementById('Veiculo');
+                    var veiculoSelecionado = veiculoDropdown.options[veiculoDropdown.selectedIndex].text;
+                    var veiculoId = veiculoDropdown.value;
+
+                    if (veiculoId) {
+                        var listaVeiculos = document.getElementById('veiculosLocados');
+                        var listItem = document.createElement('li');
+                        listItem.className = "list-group-item";
+                        listItem.textContent = veiculoSelecionado;
+                        listItem.setAttribute('data-id', veiculoId);
+                        listaVeiculos.appendChild(listItem);
+
+                        veiculoDropdown.options[veiculoDropdown.selectedIndex].style.display = 'none';
+
+                        var inputVeiculosSelecionados = document.createElement('input');
+                        inputVeiculosSelecionados.type = 'hidden';
+                        inputVeiculosSelecionados.name = 'veiculosSelecionados';
+                        inputVeiculosSelecionados.value = veiculoId;
+                        document.forms[0].appendChild(inputVeiculosSelecionados);
+                    }
+                });
+
+                document.getElementById('removerVeiculo').addEventListener('click', function () {
                     var listaVeiculos = document.getElementById('veiculosLocados');
-                    var listItem = document.createElement('li');
-                    listItem.className = "list-group-item";
-                    listItem.textContent = veiculoSelecionado;
-                    listaVeiculos.appendChild(listItem);
+                    if (listaVeiculos.children.length > 0) {
+                        var ultimoVeiculo = listaVeiculos.lastChild;
+                        var veiculoId = ultimoVeiculo.getAttribute('data-id');
+                        listaVeiculos.removeChild(ultimoVeiculo);
 
-
-                    veiculoDropdown.options[veiculoDropdown.selectedIndex].style.display = 'none';
-
-
-                    var inputVeiculosSelecionados = document.createElement('input');
-                    inputVeiculosSelecionados.type = 'hidden';
-                    inputVeiculosSelecionados.name = 'veiculosSelecionados';
-                    inputVeiculosSelecionados.value = veiculoId;
-                    document.forms[0].appendChild(inputVeiculosSelecionados);
-                }
-            });
-        </script>
+                        var veiculoDropdown = document.getElementById('Veiculo');
+                        for (var i = 0; i < veiculoDropdown.options.length; i++) {
+                            if (veiculoDropdown.options[i].value === veiculoId) {
+                                veiculoDropdown.options[i].style.display = 'block';
+                                break;
+                            }
+                        }
+                    }
+                });
+            </script>
 
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
@@ -88,5 +103,7 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
